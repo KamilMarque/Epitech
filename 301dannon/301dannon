@@ -1,0 +1,145 @@
+#!/usr/bin/python3
+
+import sys
+import re
+
+def usage():
+	print("USAGE\n\t./301dannon file\n\n" +
+			"DESCRIPTION\n\tfile\tfile that contains the"
+			" numbers to be sorted, seperated by spaces", file=sys.stderr)
+	exit (84)
+
+def parse_file(filename):
+	try:
+		file = open(filename,"r")
+	except IOError:
+		print("Error %s doesn't exist" %(filename) , file=sys.stderr)
+		exit (84)
+	array = []
+	for line in file:
+		for x in re.split("[\t abcdefijklmnopqrstuvwxyz:/!;?,():]", line):
+			try:
+				array.append(float(x))
+			except ValueError:
+				continue
+
+	file.close()
+	return array
+
+def insert_sort(array):
+	count = 0
+
+	for i in range(1, len(array)):
+		current = array[i]
+		pos = i - 1
+		count += 1
+		while (pos >= 0) and current < array[pos]:
+			count += 1
+			array[pos + 1] = array[pos]
+			pos -= 1
+		array[pos + 1] = current
+	return count
+
+def select_sort(array):
+	count = 0
+
+	for numb in range(len(array) - 1):
+		max = 0
+		for pos in range(numb + 1, len(array)):
+			count += 1
+			if (array[pos] > array[max]):
+				max = pos
+			array[pos], array[max] = array[max], array[pos]
+	return count
+
+def merge(left, right):
+	global count_fus
+	c = []
+	while len(left) != 0 and len(right) != 0:
+		count_fus += 1
+		if (left[0] < right[0]):
+			c.append(left[0])
+			left.remove(left[0])
+		else:
+			c.append(right[0])
+			right.remove(right[0])
+	if (len(left) == 0):
+		c += right
+	else:
+		c += left
+	return c
+
+def merge_sort(array):
+	if (len(array) == 0 or len(array) == 1):
+		return array
+	else:
+		mid = len(array) // 2
+		left = merge_sort(array[:mid])
+		right = merge_sort(array[mid:])
+		array = merge(left, right)
+	return array
+
+def bubble_sort(array):
+	count = 0
+
+	for x in range(len(array) - 1, 0, -1):
+		for i in range(x):
+			count += 1
+			if (array[i] > array[i + 1]):
+				array[i], array[i + 1] = array[i + 1], array[i]
+	return count
+
+def quick_sort(t):
+	global count_quick
+
+	if (len(t) < 2):
+		return
+	right = []
+	left = []
+	pivot = 0
+	for i in range(len(t)):
+		if (i != pivot):
+			count_quick += 1
+			if (t[i] < t[pivot]):
+				left.append(t[i])
+			if (t[i] >= t[pivot]):
+				right.append(t[i])
+	quick_sort(left)
+	quick_sort(right)
+	pass
+
+def dannon(argv):
+	try:
+		if (len(sys.argv) != 2):
+			usage()
+	except IndexError:
+		usage()
+	numbers = parse_file(sys.argv[1])
+	if (len(numbers) == 0):
+		usage()
+	elif (len(numbers) > 1):
+		print("%d elements" % (len(numbers)))
+	else:
+		print("%d element" % (len(numbers)))
+	print("select sort: %d comparison%s" % (select_sort(numbers), "s" if select_sort(numbers) > 1 else ""))
+	
+	numbers = parse_file(sys.argv[1])
+	print("insertion sort: %d comparison%s" % (insert_sort(numbers), "s" if insert_sort(numbers) > 1 else ""))
+	
+	numbers = parse_file(sys.argv[1])
+	print("bubble sort: %d comparison%s" % (bubble_sort(numbers), "s" if bubble_sort(numbers) > 1 else ""))
+	
+	numbers = parse_file(sys.argv[1])
+	merge_sort(numbers)
+	print("fusion sort: %d comparison%s" % (count_fus, "s" if count_fus > 1 else ""))
+	
+	numbers = parse_file(sys.argv[1])
+	quick_sort(numbers)
+	print("quicksort: %d comparison%s" % (count_quick, "s" if count_quick > 1 else ""))
+	
+	pass
+
+
+count_fus = 0
+count_quick = 0
+dannon(sys.argv)

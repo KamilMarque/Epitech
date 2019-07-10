@@ -1,0 +1,75 @@
+#!/usr/bin/python
+
+import sys
+import math
+
+def check(arg):
+        try:
+                tmp = int(arg)
+        except:
+                print "Need numbers !"
+                return (0)
+        if (tmp >= 0):
+                return (1)
+        else:
+                print "Need numbers !"
+                return (0)
+
+def print_all(var_n, var_sd, var_a, var_kvadratiske, var_h):
+        print "\tantal malinder:\t\t%d" % var_n
+        print "\tstandardafvilgelse:\t%.2f" % var_sd
+        print "\taritmetisk gennemsnit:\t%.2f" % var_a
+        print "\tkvadrastisk gennemsnit:\t%.2f" % var_kvadratiske
+        print "\tharmonisk gennemsnit:\t%.2f" % var_h
+
+def my_calc(tab):
+        var_n = float(tab[1])
+        var_a = float(tab[2])
+        var_h = float(tab[3])
+        var_sd = float(tab[4])
+        input_var = raw_input("indtast din vaerdi : ")
+        while (input_var != "ENDE"):
+                if (check(input_var) == 1):
+                        var_tmp = float(input_var)
+                        var_kvadratiske = ((pow(var_sd, 2) + pow(var_a, 2)) * var_n + pow(var_tmp, 2)) / (var_n + 1)
+                        var_a = (var_a * var_n + var_tmp) / (var_n + 1)
+                        var_sd = math.sqrt(var_kvadratiske - pow(var_a, 2))
+                        var_kvadratiske = math.sqrt(var_kvadratiske)
+                        var_h = float(var_n + 1) / ((float(var_n) / var_h) + 1.0 / var_tmp)
+                        var_n = var_n + 1
+                        print_all(var_n, var_sd, var_a, var_kvadratiske, var_h)
+                input_var = raw_input("indtast din vaerdi : ")
+        return (0)
+
+def my_help():
+    print ("USAGE\n\t\t./206neutrinos n a h sd")
+    print("DESCRIPTION\n\t\tn\tnumber of values")
+    print("\t\ta\tarithmetic mean\n\t\th\tharmonic mean")
+    print("\t\tsd\tstandard deviation")
+    return (0)
+
+def args(nb):
+    i = 1
+    while (i < len(nb) - 1):
+        try:
+            var = float(nb[i])
+        except:
+            return (0)
+        if (var < 0):
+            return (0)
+        i = i + 1
+    return (1)
+
+def main():
+        ac = len(sys.argv)
+        if (ac == 2 and sys.argv[1] == "-h"):
+                my_help()
+                return (0)
+        if (ac != 5 or args(sys.argv) == 0):
+                return (84)
+        my_calc(sys.argv)
+        return (0)
+
+if __name__ == "__main__":
+    sys.exit(main())
+

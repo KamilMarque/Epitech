@@ -1,0 +1,26 @@
+IPCS
+
+partie memoire :
+
+SHM
+SEM --> return valeur
+MSGQ
+
+shmget(id --> key -> ftok, taille, flags)
+
+shmat --> return pointeur zone memoire
+
+detruire une shm --> shmctl(id, flags) ipcid
+_______________________________________________________________________
+
+semget -> charger une semafore ou supprimer
+semctl -> assigner des valeur aux semafor
+semop(index, valeur positive pour ++ / negative pour --)
+
+_________________________________________________________________________
+MSGQ
+
+msgget --> créer
+msgctl --> supprimer
+msgsnd --> envoyer un msg
+msgrev

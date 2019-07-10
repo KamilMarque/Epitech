@@ -1,0 +1,24 @@
+/*
+** my_strcat.c for  in /home/marque_p/rendu/Piscine_C_J07/lib/my
+** 
+** Made by Kamil Marque
+** Login   <marque_p@epitech.net>
+** 
+** Started on  Tue Oct  6 09:48:20 2015 Kamil Marque
+** Last update Wed Mar 16 19:09:45 2016 Kamil Marque
+*/
+
+#include "my.h"
+
+char	*my_strcat(char *dest, char *src)
+{
+  int	i;
+  inti	j;
+
+  j = 0;
+  i = my_strlen(dest);
+  while (src[j])
+    dest[i++] = src[j++];
+  dest[i] = '\0';
+  return (dest);
+}

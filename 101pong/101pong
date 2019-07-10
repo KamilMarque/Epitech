@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+
+import sys
+from math import sqrt
+from math import atan
+from math import degrees
+from math import asin
+
+def is_number1(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        pass
+    return False
+
+def is_number2(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        pass
+    return False
+
+
+def     main():
+    i = 1
+    if (len(sys.argv) == 8):
+        while (i != len(sys.argv) and ((is_number1(sys.argv[i]) == True) or (is_number2(sys.argv[i]) == True))):
+            i = i + 1
+        if (i == len(sys.argv)):
+            x0 = float(sys.argv[1])
+            y0 = float(sys.argv[2])
+            z0 = float(sys.argv[3])
+            x1 = float(sys.argv[4])
+            y1 = float(sys.argv[5])
+            z1 = float(sys.argv[6])
+            x = x1 - x0
+            y = y1 - y0
+            z = z1 - z0
+            print("The speed vector coordinates are :")
+            print(format(x, '.2f'), end = ';')
+            print(format(y, '.2f'), end = ';')
+            print(format(z, '.2f'))
+            print("At time t+", end = '')
+            print(sys.argv[7], end = '')
+            print(", ball coordinates will be :")
+            print(format(float(sys.argv[7]) * x + x1, '.2f'), end = ';')
+            print(format(float(sys.argv[7]) * y + y1, '.2f'), end = ';')
+            print(format(float(sys.argv[7]) * z + z1, '.2f'))
+            if ((z1 < 0 and z > 0) or (z1 > 0 and z < 0)):
+                print("The incidence angle is :")
+                print(format(degrees(asin(z / sqrt(x * x + y * y + z * z))), '.2f'))
+            else:
+                sys.stderr.write("The ball won’t reach the bat.\n")
+        else:
+            sys.stderr.write("Only numbers.\n")
+    else:
+        sys.stderr.write("./101pong x0 y0 z0 x1 y1 z1 n.\n")
+
+main()

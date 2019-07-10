@@ -1,0 +1,203 @@
+#! /usr/bin/python3
+
+import sys
+
+lastString = []
+
+class Graph(list):
+	def __init__(self, name):
+		self.name = name
+		self.command = []
+		self.depend = []
+	def addDependency(self, graph):
+		if (graph not in self.depend):
+			self.depend.append(graph)
+	def setCommand(self, command):
+		self.command.append(command)
+		
+def sortDepend(vec):
+	sort = 1
+
+	if (len(vec) == 0):
+		return ;
+	while (sort != 0):
+		sort = 0
+		for i in range(len(vec) -1):
+			if (vec[i] > vec[i + 1]):
+				tmp = vec[i]
+				vec[i] = vec[i + 1]
+				vec[i + 1] = tmp
+				sort = 1
+
+def sortGraph(graph):
+	sort = 1
+
+	if (len(graph) == 0):
+		return ;
+	while (sort != 0):
+		sort = 0
+		for i in range(len(graph) - 1):
+			if (graph[i].name > graph[i + 1].name):
+				tmp = graph[i]
+				graph[i] = graph[i + 1]
+				graph[i + 1] = tmp
+				sort = 1
+
+def sortAll(lgraph):
+    sortGraph(lgraph)
+    for i in range(len(lgraph)):
+        sortDepend(lgraph[i].depend)
+
+def findInGraph(lgraph, name):
+	i = 0
+	for graph in lgraph:
+		if (graph.name == name):
+			return i
+		i += 1
+	return -1
+
+def affCommand(command):
+	global lastString
+
+	for string in command:
+		if (string not in lastString or len(lastString) == 0):
+			lastString.append(string)
+			print(string)
+
+def getCommandFrom(lgraph, file, nb):
+	index = findInGraph(lgraph, file)
+
+	if (index == -1):
+		return -1
+
+	if (len(lgraph[index].depend) != 0):
+		for i in range(len(lgraph[index].depend)):
+			tmp = findInGraph(lgraph, lgraph[index].depend[i])
+			if (tmp == -1):
+				return (-1)
+			affCommand(lgraph[tmp].command)
+		i = 0
+		while (i < len(lgraph[index].depend)):
+			tmp = findInGraph(lgraph, lgraph[index].depend[i])
+			if (getCommandFrom(lgraph, lgraph[tmp].name, nb + 1) == -1):
+				return (-1)
+			i += 1
+	elif (nb == 0):
+		print("")
+	return 0
+
+def isInDepend(name, dep):
+	if (len(dep) == 0):
+		return 0
+	if (name in dep):
+		return 1
+	return 0
+
+def affMatrix(graph):
+	i = 0
+	while (i < len(graph)):
+		endLine = False
+		print("[", end='')
+		u = 0
+		while (u < len(graph)):
+			if (endLine):
+				print(" ", end='')
+			print(isInDepend(graph[i].name, graph[u].depend), end='')
+			endLine = True
+			u += 1
+		i += 1
+		print("]")
+
+def recursDepend(graph, lgraph):
+	index = 0
+
+	if (len(graph.depend) == 0):
+		print(graph.name)
+	else:
+		i = 0
+		while (i < len(graph.depend)):
+			print(graph.name + " -> ", end='')
+			index = findInGraph(lgraph, graph.depend[i])
+			if (index != -1):
+				recursDepend(lgraph[index], lgraph)
+			i += 1
+
+def affDepend(lgraph):
+	for i in range(len(lgraph)):
+		if (len(lgraph[i].depend) != 0):
+			recursDepend(lgraph[i], lgraph)
+
+def affMatrixLink(lgraph):
+	affMatrix(lgraph)
+	print("")
+	affDepend(lgraph)
+
+def getNewDepend(lgraph, depend, line):
+	block = []
+	tmp = 0
+
+	block = line.split(':')
+	if (len(block) != 2):
+		return None
+	depend = block[0]
+	if (findInGraph(lgraph, depend) == -1):
+		lgraph.append(Graph(depend))
+	block = block[1].split(' ')
+	for i in range(len(block)):
+		tmp = findInGraph(lgraph, block[i])
+		if (tmp == -1 and len(block[i]) != 0):
+			lgraph.append(Graph(block[i]))
+		tmp = findInGraph(lgraph, block[i])
+		if (tmp != -1):
+			lgraph[tmp].addDependency(depend)
+	return depend
+
+def getDependCommand(lgraph, depend, line):
+	command = line.strip()
+
+	index = findInGraph(lgraph, depend)
+	if (index == -1):
+		return -1
+	lgraph[index].setCommand(command)
+	return 0
+
+def createGraph(line):
+	lgraph = []
+	depend = ""
+
+	for i in range(len(line)):
+		if (":" in line[i]):
+			depend = getNewDepend(lgraph, depend, line[i])
+			if (depend == None):
+				return []
+		elif (len(line[i]) != 0):
+			if (getDependCommand(lgraph, depend, line[i]) == -1):
+				return []
+	return lgraph
+
+def openFile(name):
+    lline = []
+    try:
+        file = open(name, "r")
+    except IOError:
+        print("Error %s doesn't exist" %(name), file=sys.stderr)
+    for line in file:
+        lline.append(line.strip())
+    return lline
+
+line = []
+if (len(sys.argv) < 2):
+    exit(84)
+line = openFile(sys.argv[1])
+if (len(line) == 0):
+    exit(84)
+lgraph = createGraph(line)
+if (len(lgraph) == 0):
+    exit(84)
+sortAll(lgraph)
+if (len(sys.argv) > 2):
+	if (getCommandFrom(lgraph, sys.argv[2], 0) == -1):
+		exit(84)
+else:
+	affMatrixLink(lgraph)
+exit(0)

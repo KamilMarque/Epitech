@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+
+import sys
+from math import sqrt
+from math import atan
+from math import degrees
+from math import asin
+
+def is_number2(s):
+    try:
+        t = int(s)
+        if (t < 50):
+            return False
+        else:
+            return True
+    except ValueError:
+        pass
+    return False
+
+def     calc_fontion(a, b, i, j):
+    ret = (a - i) * (b - j)
+    return float(ret / (((5.0 * a) - 150.0) * ((5.0 * b) - 150.0)))
+
+def     my_esper2(my_tab):
+    i = 0
+    res = 0.0
+    while (i < 9):
+        res += float(my_tab[0][i]) * my_tab[1][i]
+        i += 1
+    return (res)
+
+def     my_esper(z_tab):
+    i = 0
+    res = 0.0
+
+    while (i < 5):
+        res += float(z_tab[0][i]) * z_tab[1][i]
+        i += 1
+    return (res)
+
+def     my_vari2(z_tab, esper):
+    i = 0
+    res = 0.0
+    while (i < 9):
+        res += (z_tab[0][i] - esper) * (z_tab[0][i] - esper) * z_tab[1][i]
+        i += 1
+    return (res)
+
+def     my_vari(z_tab, esper):
+    i = 0
+    res = 0.0
+    while (i < 5):
+        res += (z_tab[0][i] - esper) * (z_tab[0][i] - esper) * z_tab[1][i]
+        i += 1
+    return (res)
+
+def     changetab2(my_tab):
+    new_tab = [[0 for u in range(5)] for u in range(2)]
+    i = 0
+    tmp = 10
+    while (i < 5):
+        new_tab[0][i] = tmp
+        new_tab[1][i] = my_tab[i][5]
+        tmp += 10
+        i += 1
+    return (new_tab)
+
+def     changetab(my_tab):
+    new_tab = [[0 for u in range(5)] for u in range(2)]
+    i = 0
+    tmp = 10
+    while (i < 5):
+        new_tab[0][i] = tmp
+        new_tab[1][i] = my_tab[5][i]
+        tmp += 10
+        i += 1
+    return (new_tab)
+
+def     z_function(my_tab):
+    z_tab = [[0 for u in range(10)] for u in range(2)]
+    z_tab[1][0] = my_tab[0][0]
+    z_tab[1][1] = my_tab[0][1] + my_tab[1][0]
+    z_tab[1][2] = my_tab[0][2] + my_tab[1][1] + my_tab[2][0]
+    z_tab[1][3] = my_tab[0][3] + my_tab[2][1] + my_tab[1][2] + my_tab[3][0]
+    z_tab[1][4] = my_tab[4][0] + my_tab[3][1] + my_tab[2][2] + my_tab[1][3] + my_tab[0][4]
+    z_tab[1][5] = my_tab[4][1] + my_tab[3][2] + my_tab[2][3] + my_tab[1][4]
+    z_tab[1][6] = my_tab[4][2] + my_tab[3][3] + my_tab[2][4]
+    z_tab[1][7] = my_tab[4][3] + my_tab[3][4]
+    z_tab[1][8] = my_tab[4][4]
+    i = 20.0
+    j = 0
+    string = "p(Z=z)  "
+    while (i <= 100.0):
+        z_tab[0][j] = i
+        string += "%0.3f " % z_tab[1][j]
+        i += 10.0
+        j += 1
+    print ("----------------------------------------")
+    print ("z       20    30    40    50    60    70    80    90    100     total")
+    string += "  1"
+    print (string)
+    print ("----------------------------------------")
+    my_tab_x = lawX = [[0 for u in range(5)] for u in range(2)]
+    my_tab_y = lawX = [[0 for u in range(5)] for u in range(2)]
+    my_tab_x = changetab2(my_tab)
+    my_tab_y = changetab(my_tab)
+    temp_esp = my_esper(my_tab_x)
+    print("expected value of X:  %0.1f" % temp_esp)
+    print("variance of X:        %0.1f" % my_vari(my_tab_x, temp_esp))
+    temp_esp = my_esper(my_tab_y)
+    print("expected value of Y:  %0.1f" % temp_esp)
+    print("variance of Y:        %0.1f" % my_vari(my_tab_y, temp_esp))
+    temp_esp = my_esper2(z_tab)
+    print ("expected value of Z:  %0.1f" % temp_esp)
+    print ("variance of Z:        %0.1f" % my_vari2(z_tab, temp_esp))
+    print ("----------------------------------------")
+
+
+def     last_result(str_tab, my_tab):
+    i = 0
+    while (i < 5):
+        ret = 0
+        j = 0
+        while (j < 6):
+            ret += my_tab[j][i]
+            j += 1
+        my_tab[j - 1][i] = ret
+        str_tab += "%.3f  " % ret
+        i += 1
+    str_tab += "1"
+    print ("----------------------------------------")
+    print ("      X=10   X=20   X=30   x=40   x=50   Y law")
+    print (str_tab)
+    z_function(my_tab)
+
+def     unsold(a, b):
+    i = 10
+    k = 0
+    str_tab = ""
+    my_tab = [[0.0 for x in range(7)] for y in range(7)]
+    while (i < 60):
+        str_tab += "Y=%d  " % i
+        j = 10
+        l = 0
+        res = 0.0
+        while (j < 60):
+            my_tab[k][l] = calc_fontion(a, b, i, j)
+            str_tab += "%.3f  " % calc_fontion(a, b, i, j)
+            res += my_tab[k][l]
+            j += 10
+            l += 1
+        my_tab[k][l] = res
+        str_tab += "%.3f" % res
+        str_tab += "\n"
+        i += 10
+        k += 1
+    str_tab += "X law "
+    last_result(str_tab, my_tab)
+
+
+def     main():
+    i = 1
+    if (len(sys.argv) == 2 and sys.argv[1] == "-h"):
+        print ("USAGE\n\t./202unsold a b\n\nDESCRIPTION\n\ta\tconstant computed from the past results\n\tb\tconstant computed from the past results")
+        return (0)
+    if (len(sys.argv) == 3):
+        while (i != len(sys.argv) and ((is_number2(sys.argv[i]) == True))):
+            i = i + 1
+        if (i == len(sys.argv)):
+            unsold(float(sys.argv[1]), float(sys.argv[2]))
+            return (0)
+        else:
+            sys.stderr.write("Only numbers >= 50.\n")
+            exit (84)
+    else:
+        sys.stderr.write("./202unsold -h\n")
+        exit (84)
+
+main()

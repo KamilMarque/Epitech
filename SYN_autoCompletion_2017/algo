@@ -1,0 +1,16 @@
+Tant que la ville n'est pas la meme
+     trouver les lettres dispo
+     trier les lettres
+     SI il ya pas qu'une lettre
+     	afficher les propositions
+	recuperer l'entrée utilisateur
+	effacer les villes qui match pas
+     SINON
+        ajouter la lettre
+     reset les lettres
+_______________________________________________________________________________________________________
+     SI il ya des villes avec des mots complets
+     	les afficher
+	SI l'utilisateur choisi 1 ou 2 c bon
+	SINON
+		Est ce qu'on peut completer le mot déjà complet ou un nouveau commence par cette lettre
